@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    websocket testing
+    <input type="text" placeholder="message" id="msg">
+    <input type="text" placeholder="chatRoom" id="forUser">
+    <input type="text" placeholder="userId" id="fromUser">
+    <button onclick="sendMsg()">send msg</button>
+
+    <div id="chat">
+        
+    </div>
+</body>
+
+<script>
+    let msg = document.getElementById("msg");
+    let forUser = document.getElementById("forUser");
+    let fromUser = document.getElementById("fromUser");
+    let chat = document.getElementById("chat");
+    var ws = new WebSocket("ws://localhost:8080/ws");
+    let jsonData;
+
+
+    ws.onmessage = function(e){
+        console.log(e.data)
+        jsonData = JSON.parse(e.data)
+    chat.innerHTML += `<p> ${jsonData.fromUser} + ">>" + ${jsonData.body}</p>`
+        }
+
+    ws.onopen = function(e){
+        console.log("connection opened with server")
+        console.log(e)
+    }
+
+
+
+    function sendMsg(){
+        var data = {
+            "forUser": forUser.value,
+            "fromUser": fromUser.value,
+            "body": msg.value  
+        }
+        ws.send(JSON.stringify(data))
+    }
+</script>
+</html>
